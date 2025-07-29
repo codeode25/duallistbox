@@ -6,6 +6,7 @@ import ListBoxSearch from './ListBoxSearch.vue';
 
 
 const props = defineProps(['list', 'groupMode', 'selectedAll']);
+const emits = defineEmits(['toggleSelectAll'])
 const search = ref('');
 
 const onSearch = (query: string) => search.value = query.trim();
@@ -24,6 +25,8 @@ const filteredList = computed(() => {
     }
 })
 
+const toggleSelectAll = (selectAll: boolean) => emits('toggleSelectAll', selectAll)
+
 </script>
 
 <template>
@@ -38,7 +41,7 @@ const filteredList = computed(() => {
             />
         </div>
         <div class="list-box-controls-wrapper">
-            <ListBoxControls />
+            <ListBoxControls @toggle-select-all="toggleSelectAll"/>
         </div>
     </div>
 </template>

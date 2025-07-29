@@ -22,13 +22,31 @@ function initItems(items: any[], groupMode: boolean) {
     })
 }
 
+const toggleSelectAll = (selectAll: boolean, list: any) => {
+    if (props.groupMode) {
+        list.value.forEach((groupItem) => {
+            groupItem.items.forEach((item) => item.selected = selectAll);
+        })
+    } else {
+        list.value.forEach((item) => item.selected = selectAll);
+    }
+}
+
+const toggleSelectAllSource = (selectAll: boolean) => {
+    toggleSelectAll(selectAll, source);
+}
+
+const toggleSelectAllDestination = (selectAll: boolean) => {
+    toggleSelectAll(selectAll, destination)
+}
+
 </script>
 
 <template>
     <div class="duallistbox">
-        <ListBox :list="source" :groupMode="groupMode"/>
+        <ListBox :list="source" :groupMode="groupMode"  @toggle-select-all="toggleSelectAllSource"/>
         <TransferControls />
-        <ListBox :list="destination" :groupMode="groupMode"/>
+        <ListBox :list="destination" :groupMode="groupMode"  @toggle-select-all="toggleSelectAllDestination"/>
     </div>
 </template>
 
