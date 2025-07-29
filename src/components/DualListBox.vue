@@ -26,9 +26,9 @@ function initItems(items: any[], groupMode: boolean) {
 
 <template>
     <div class="duallistbox">
-        <ListBox />
+        <ListBox :list="source" :groupMode="groupMode"/>
         <TransferControls />
-        <ListBox />
+        <ListBox :list="destination" :groupMode="groupMode"/>
     </div>
 </template>
 

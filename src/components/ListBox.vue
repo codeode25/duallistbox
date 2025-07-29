@@ -1,20 +1,41 @@
 <script lang="ts" setup>
+import { computed, ref } from 'vue';
 import ListBoxControls from './ListBoxControls.vue';
 import ListBoxList from './ListBoxList.vue';
 import ListBoxSearch from './ListBoxSearch.vue';
 
 
-const props = defineProps(['list', 'groupMode']);
+const props = defineProps(['list', 'groupMode', 'selectedAll']);
+const search = ref('');
+
+const onSearch = (query: string) => search.value = query.trim();
+
+const filteredList = computed(() => {
+    if (search.value == '') {
+        return props.list;
+    }
+
+    if (props.groupMode) {
+        return props.list.filter((groupItem) => {
+            return groupItem.items.filter((item) => item.label.toLowerCase().includes(search.value.toLocaleLowerCase()));
+        })
+    } else {
+        return props.list.filter((item) => item.label.toLowerCase().includes(search.value.toLocaleLowerCase()));
+    }
+})
 
 </script>
 
 <template>
     <div class="list-box">
         <div class="list-box-search-wrapper">
-            <ListBoxSearch />
+            <ListBoxSearch @search="onSearch"/>
         </div>
         <div class="list-box-list-wrapper">
-            <ListBoxList />
+            <ListBoxList 
+                :list="filteredList"
+                :groupMode="groupMode"
+            />
         </div>
         <div class="list-box-controls-wrapper">
             <ListBoxControls />
