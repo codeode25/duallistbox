@@ -48,14 +48,20 @@ const transfer = (source: any[], destination: any[]) => {
 </script>
 
 <template>
-  <DualListBox 
-    :source="groupData"
-    :destination="destination"
-    :groupMode="true"
-    @transfer="transfer"
-  />
+    <div class="container">
+      <DualListBox 
+        :source="groupData"
+        :destination="destination"
+        :groupMode="true"
+        @transfer="transfer"
+      />
+    </div>
 </template>
 
 <style scoped>
-
+  .container {
+    padding: 50px 30px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
 </style>

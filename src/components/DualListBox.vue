@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
+import ListBox from './ListBox.vue';
+import TransferControls from './TransferControls.vue';
 
 const props = defineProps(['source', 'destination', 'groupMode']);
 const emit = defineEmits(['transfer']);
@@ -23,5 +25,24 @@ function initItems(items: any[], groupMode: boolean) {
 </script>
 
 <template>
-
+    <div class="duallistbox">
+        <ListBox />
+        <TransferControls />
+        <ListBox />
+    </div>
 </template>
+
+<style scoped>
+    .duallistbox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    @media screen  and (min-width: 48rem){
+        .duallistbox {
+            flex-direction: row;
+        }
+    }
+</style>
