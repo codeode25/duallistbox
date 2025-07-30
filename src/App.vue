@@ -50,9 +50,9 @@ const transfer = (source: any[], destination: any[]) => {
 <template>
     <div class="container">
       <DualListBox 
-        :source="groupData"
+        :source="flatData"
         :destination="destination"
-        :groupMode="true"
+        :groupMode="false"
         @transfer="transfer"
       />
     </div>

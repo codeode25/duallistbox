@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 
 import ListBox from './ListBox.vue';
 import TransferControls from './TransferControls.vue';
@@ -10,12 +10,12 @@ const emit = defineEmits(['transfer']);
 const source = ref(initItems(props.source, props.groupMode));
 const destination = ref(initItems(props.destination, props.groupMode));
 
-function initItems(items: any[], groupMode: boolean) {
+function initItems(items: any[], groupMode: boolean, withSelected: boolean = true) {
     return items.map((item) => {
         if (groupMode) {
-            item.items = item.items.map((it) => ({...it, selected: false}));
+            item.items = item.items.map((it) => (withSelected ? {...it, selected: false} : {label: it.label, value: it.value}));
         } else {
-            item = {...item, selected: false};
+            item = withSelected ? {...item, selected: false} : {label: item.value, value: item.value};
         }
 
         return item;
@@ -40,12 +40,66 @@ const toggleSelectAllDestination = (selectAll: boolean) => {
     toggleSelectAll(selectAll, destination)
 }
 
+const transferItems = (fromList: Ref<any[]>, toList: Ref<any[]>) => {
+    if (props.groupMode) {
+        fromList.value.forEach((groupItem, index) => {
+            const selectedItems = groupItem.items.filter((item) => item.selected);
+            groupItem.items = groupItem.items.filter((item) => !item.selected);
+
+            if (selectedItems.length > 0) {
+                let groupExists = toList.value.find((group) => group.group === groupItem.group);
+
+                if (groupExists) {
+                    groupExists.items = [...groupExists.items, ...selectedItems.map(((item) => ({...item, selected: false})))]
+                } else {
+                    groupExists = {
+                        group: groupItem.group,
+                        items: [...selectedItems.map((item) => ({...item, selected: false}))],
+                    }
+
+                    toList.value.push(groupExists);
+                }
+            } 
+
+            if (groupItem.items.length == 0) {
+                fromList.value.splice(index, 1);
+            }
+        })
+
+    } else {
+        const selectedItems = fromList.value.filter((item) => item.selected);
+        fromList.value = fromList.value.filter((item) => !item.selected);
+        toList.value = [...toList.value, ...(selectedItems.map((item) => ({...item, selected: false})))]
+    }
+}
+
+const moveToDestination = () => {
+    transferItems(source, destination);
+
+    emit('transfer', {
+        source: [...initItems(source.value, props.groupMode, false)],
+        destination: [...initItems(destination.value, props.groupMode, false)],
+    })
+};
+
+const moveToSource = () => {
+    transferItems(destination, source);
+
+    emit('transfer', {
+        source: [...initItems(source.value, props.groupMode, false)],
+        destination: [...initItems(destination.value, props.groupMode, false)],
+    })
+};
+
 </script>
 
 <template>
     <div class="duallistbox">
         <ListBox :list="source" :groupMode="groupMode"  @toggle-select-all="toggleSelectAllSource"/>
-        <TransferControls />
+        <TransferControls 
+            @moveToSource="moveToSource"
+            @moveToDestination="moveToDestination"
+        />
         <ListBox :list="destination" :groupMode="groupMode"  @toggle-select-all="toggleSelectAllDestination"/>
     </div>
 </template>
