@@ -1,5 +1,13 @@
 <script lang="ts" setup>
-    const props = defineProps(['list', 'groupMode']);
+import type { DualListGroupItem, DualListItem } from '../types';
+
+
+    type Props = {
+        list: DualListGroupItem[] | DualListItem[],
+        groupMode: boolean
+    }
+
+    const props = defineProps<Props>();
 
     const toggleItems = (items: any[]) => {
         items.forEach((item) => {
@@ -10,7 +18,7 @@
 
 <template>
     <template v-for="(item, i) in list" :key="i">
-        <template v-if="groupMode">
+        <template v-if="'items' in item">
             <div class="list-box-list-item-group" @click="toggleItems(item.items)">
                 <div class="list-box-list-item-inner">
                     {{  item.group }}

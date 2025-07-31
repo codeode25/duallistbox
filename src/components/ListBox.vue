@@ -3,9 +3,14 @@ import { computed, ref } from 'vue';
 import ListBoxControls from './ListBoxControls.vue';
 import ListBoxList from './ListBoxList.vue';
 import ListBoxSearch from './ListBoxSearch.vue';
+import type { DualListGroupItem, DualListItem } from '../types';
 
+type Props = {
+    list: DualListGroupItem[] | DualListItem[],
+    groupMode: boolean
+}
 
-const props = defineProps(['list', 'groupMode', 'selectedAll']);
+const props = defineProps<Props>();
 const emits = defineEmits(['toggleSelectAll'])
 const search = ref('');
 
@@ -17,11 +22,11 @@ const filteredList = computed(() => {
     }
 
     if (props.groupMode) {
-        return props.list.filter((groupItem) => {
+        return (props.list as DualListGroupItem[]).filter((groupItem) => {
             return groupItem.items.filter((item) => item.label.toLowerCase().includes(search.value.toLocaleLowerCase()));
         })
     } else {
-        return props.list.filter((item) => item.label.toLowerCase().includes(search.value.toLocaleLowerCase()));
+        return (props.list as DualListItem[]).filter((item) => item.label.toLowerCase().includes(search.value.toLocaleLowerCase()));
     }
 })
 
